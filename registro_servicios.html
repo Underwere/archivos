@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Emprendimientos - Comunidad La Salle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- ESTILOS CSS --- */
+        :root {
+            --primary-color: #0056b3; /* Un azul característico, similar al logo */
+            --secondary-color: #f8f9fa;
+            --border-color: #ced4da;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        /* Diseño de la cuadrícula de campos */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Para que los campos que deben ocupar todo el ancho lo hagan */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .input-wrapper.error {
+            border-color: var(--error-color);
+        }
+
+        .input-icon {
+            padding: 10px 12px;
+            background-color: #e9ecef;
+            color: #495057;
+            border-right: 1px solid var(--border-color);
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        input, textarea {
+            border: none;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Estilo para el campo de ID (solo lectura) */
+        #id_display {
+            background-color: #f1f1f1;
+            color: #6c757d;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        /* Estilo para el contador de caracteres */
+        .char-count {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+
+        /* --- BOTONES Y RESPUESTAS --- */
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #submit_button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        #submit_button:hover:not(:disabled) {
+            background-color: #004085;
+        }
+
+        #submit_button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .message-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message-success {
+            background-color: #d4edda;
+            color: var(--success-color);
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: var(--error-color);
+            border: 1px solid #f5c6cb;
+        }
+
+        .logo-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-upload-section button {
+            padding: 10px 15px;
+            background-color: #ffc107;
+            color: #343a40;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* --- MEDIA QUERIES para Responsividad --- */
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Registro de Emprendimientos - Comunidad La Salle</h2>
+        <form id="registro_form">
+
+            <div class="form-group full-width">
+                <label for="id_display">ID de Registro</label>
+                <div class="input-wrapper">
+                    <div class="input-icon"><i class="fa-solid fa-barcode"></i></div>
+                    <input type="text" id="id_display" value="LS-XXXXXX (Generado Automáticamente)" readonly>
+                </div>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="nombre_alumno">Nombre del Alumno *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-user"></i></div>
+                        <input type="text" id="nombre_alumno" name="Nombre_Alumno" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="promocion">Promoción *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <input type="number" id="promocion" name="Promocion" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ano">Año *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-calendar-alt"></i></div>
+                        <input type="number" id="ano" name="Ano" min="1900" max="2100" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="profesion_servicio">Profesión/Servicio *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <input type="text" id="profesion_servicio" name="Profesion_Servicio" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sub_servicio">Sub Servicio</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-list-check"></i></div>
+                        <input type="text" id="sub_servicio" name="Sub_Servicio">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pais">País *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-globe"></i></div>
+                        <input type="text" id="pais" name="Pais" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ciudad">Ciudad *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-city"></i></div>
+                        <input type="text" id="ciudad" name="Ciudad" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <input type="text" id="direccion" name="Direccion">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_contacto">E-mail *</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <input type="email" id="email_contacto" name="Email_Contacto" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tlf_contacto">Teléfono</label>
+                    <div class="input-wrapper">
+                        <div class="input-icon"><i class="fa-solid fa-phone"></i></div>
+                        <input type="tel" id="tlf_contacto" name="Tlf_Contacto">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="url_logo">Imagen/Logo (Pegar URL de Google Drive)</label>
+                    <div class="logo-upload-section">
+                        <button type="button" onclick="window.open('https://drive.google.com/drive/folders/1PP01WvKQZ-O5zNG_7Ve4dxL-72fUm6fj?usp=sharing', '_blank')" title="Sube tu imagen y luego pega el enlace para compartir aquí.">
+                            <i class="fa-brands fa-google-drive"></i> Subir a Drive
+                        </button>
+                        <div class="input-wrapper" style="flex-grow: 1;">
+                            <div class="input-icon"><i class="fa-solid fa-link"></i></div>
+                            <input type="url" id="url_logo" name="Url_Logo" placeholder="Pega aquí el enlace para compartir de tu imagen subida...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width" style="position: relative;">
+                    <label for="detalle_servicio">Detalle del servicio * (Máx. 250 caracteres)</label>
+                    <textarea id="detalle_servicio" name="Detalle_Servico" maxlength="250" required></textarea>
+                    <div class="char-count" id="detalle_count">0/250</div>
+                </div>
+            </div>
+
+            <div class="message-box" id="response_message"></div>
+
+            <div class="button-group">
+                <button type="submit" id="submit_button" disabled>
+                    <i class="fa-solid fa-save"></i> Grabar Emprendimiento
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // --- LÓGICA JAVASCRIPT ---
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbytdGKNlKFtqnIwNzDwoOz5khBzOs0NBp7X0MMHd7G5_Ue2jWUhSKZX06CUWSUZ_AM/exec';
+        
+        const form = document.getElementById('registro_form');
+        const submitButton = document.getElementById('submit_button');
+        const responseMessage = document.getElementById('response_message');
+        const idDisplay = document.getElementById('id_display');
+        const requiredInputs = Array.from(form.querySelectorAll('[required]'));
+        const detalleServicio = document.getElementById('detalle_servicio');
+        const detalleCount = document.getElementById('detalle_count');
+
+        /**
+         * Verifica si todos los campos obligatorios están llenos y aplica validaciones.
+         */
+        function checkValidation() {
+            let allValid = true;
+
+            requiredInputs.forEach(input => {
+                const inputWrapper = input.closest('.input-wrapper') || input;
+                
+                // Validación básica de campo requerido
+                if (!input.value.trim()) {
+                    allValid = false;
+                    inputWrapper.classList.add('error');
+                    return;
+                } else {
+                    inputWrapper.classList.remove('error');
+                }
+
+                // Validación específica para Promoción (número)
+                if (input.id === 'promocion' && (!/^\d+$/.test(input.value) || parseInt(input.value) <= 0)) {
+                    allValid = false;
+                    inputWrapper.classList.add('error');
+                }
+
+                // Validación específica para Email
+                if (input.type === 'email' && !input.value.includes('@')) {
+                    allValid = false;
+                    inputWrapper.classList.add('error');
+                }
+            });
+
+            // Validación específica para Detalle del Servicio (longitud)
+            if (detalleServicio.value.length === 0 || detalleServicio.value.length > 250) {
+                allValid = false;
+            }
+
+            submitButton.disabled = !allValid;
+        }
+
+        /**
+         * Actualiza el contador de caracteres para el detalle del servicio.
+         */
+        function updateCharCount() {
+            const currentLength = detalleServicio.value.length;
+            detalleCount.textContent = `${currentLength}/250`;
+            checkValidation();
+        }
+
+        /**
+         * Muestra un mensaje de respuesta (éxito o error).
+         * @param {string} message - El texto del mensaje.
+         * @param {boolean} isSuccess - Si es un mensaje de éxito (true) o error (false).
+         */
+        function displayMessage(message, isSuccess) {
+            responseMessage.textContent = message;
+            responseMessage.classList.remove('message-success', 'message-error');
+            responseMessage.classList.add(isSuccess ? 'message-success' : 'message-error');
+            responseMessage.style.display = 'block';
+        }
+
+        /**
+         * Maneja el envío del formulario a la API de Google Apps Script.
+         */
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Si el botón está deshabilitado, no hacemos nada (doble chequeo)
+            if (submitButton.disabled) return;
+            
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Grabando...';
+            responseMessage.style.display = 'none';
+
+            // 1. Recolección de datos
+            const formData = {
+                Nombre_Alumno: document.getElementById('nombre_alumno').value,
+                Promocion: document.getElementById('promocion').value,
+                Ano: document.getElementById('ano').value,
+                Profesion_Servicio: document.getElementById('profesion_servicio').value,
+                Sub_Servicio: document.getElementById('sub_servicio').value || "",
+                Pais: document.getElementById('pais').value,
+                Ciudad: document.getElementById('ciudad').value,
+                Direccion: document.getElementById('direccion').value || "",
+                Email_Contacto: document.getElementById('email_contacto').value,
+                Tlf_Contacto: document.getElementById('tlf_contacto').value || "",
+                Detalle_Servico: document.getElementById('detalle_servicio').value,
+                Url_Logo: document.getElementById('url_logo').value || "",
+                Estado: "PENDIENTE" // Campo fijo según requerimiento
+            };
+
+            try {
+                // 2. Envío de datos a la API
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // 3. Procesamiento de la respuesta
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    displayMessage(`¡Registro exitoso! ID Generado: ${result.new_id}. Será revisado pronto.`, true);
+                    idDisplay.value = result.new_id;
+                    form.reset(); // Limpiar el formulario
+                    updateCharCount(); // Actualizar contador y validar (deshabilitará el botón)
+                } else {
+                    displayMessage(`Error al guardar: ${result.message || 'Error desconocido'}`, false);
+                }
+
+            } catch (error) {
+                console.error("Error de red/petición:", error);
+                displayMessage('Ocurrió un error de conexión con la API de Google.' + error , false);
+            } finally {
+                // 4. Restaurar el botón y la validación
+                submitButton.innerHTML = '<i class="fa-solid fa-save"></i> Grabar Emprendimiento';
+                checkValidation(); // Re-chequea para habilitar/deshabilitar según el estado del formulario (ahora limpio)
+            }
+        }
+        
+        // --- ASIGNACIÓN DE EVENTOS ---
+        
+        // Asignar el listener de envío al formulario
+        form.addEventListener('submit', handleSubmit);
+
+        // Asignar listeners de input a todos los campos para validación en tiempo real
+        form.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', checkValidation);
+        });
+        
+        // Listener específico para el contador de caracteres
+        detalleServicio.addEventListener('input', updateCharCount);
+
+        // Inicializar la validación al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            checkValidation();
+            updateCharCount();
+        });
+        
+    </script>
+</body>
+</html>
